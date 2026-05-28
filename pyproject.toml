@@ -1,0 +1,63 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "diff-tool"
+version = "0.1.0"
+description = "A pure-Python LCS-based diff library and CLI."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.4",
+    "mypy>=1.8",
+]
+
+[project.scripts]
+diff-tool = "diff_tool.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["diff_tool*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.coverage.run]
+source = ["diff_tool"]
+omit = ["tests/*"]
+
+[tool.coverage.report]
+fail_under = 85
+show_missing = true
+skip_empty = true
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["I001"]
+"diff_tool/models.py" = ["UP042"]
+"diff_tool/color.py" = ["UP042"]
+"diff_tool/formatters/side_by_side.py" = ["E501"]
+"diff_tool/formatters/unified.py" = ["E501"]
+
+[tool.mypy]
+python_version = "3.11"
+files = ["diff_tool"]
+warn_return_any = true
+warn_unused_configs = true
+check_untyped_defs = true
+no_implicit_optional = true
