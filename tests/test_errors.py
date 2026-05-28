@@ -1,4 +1,4 @@
-"""Exception hierarchy smoke tests."""
+"""Exception hierarchy smoke tests """
 
 from diff_tool.errors import (
     BinaryFileError,
