@@ -1,0 +1,9 @@
+--- old.txt
++++ new.txt
+@@ -1,4 +1,5 @@
+ alpha
+-bravo
++bravo changed
+ charlie
++echo
+ delta
