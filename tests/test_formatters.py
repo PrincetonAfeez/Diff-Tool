@@ -1,4 +1,4 @@
-""" Tests for the formatters """
+"""Tests for the formatters."""
 
 import pytest
 
