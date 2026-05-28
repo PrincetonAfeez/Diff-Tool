@@ -1,3 +1,14 @@
-# Runtime: no third-party dependencies (stdlib only).
-# Install: pip install -e .
-# Dev install: pip install -e ".[dev]"  or  pip install -r requirements-dev.txt
+# Runtime dependencies
+# ----------------------
+# None. The library and CLI use only the Python standard library.
+#
+# Install (editable, recommended for development):
+#   pip install -e .
+#
+# Install (non-editable):
+#   pip install .
+#
+# Development tools (pytest, coverage, ruff, mypy) are optional extras
+# declared in pyproject.toml. Use one of:
+#   pip install -e ".[dev]"
+#   pip install -r requirements-dev.txt
