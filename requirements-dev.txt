@@ -1,5 +1,6 @@
 # Development install: package + dev extras from pyproject.toml
 #
+# Version ranges (floor and upper bound) live in pyproject.toml [dev].
 # Includes:
 #   - pytest, pytest-cov (tests and coverage)
 #   - ruff (lint + format)
