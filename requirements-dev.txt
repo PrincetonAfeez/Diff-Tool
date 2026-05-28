@@ -1,0 +1,4 @@
+# Editable install with dev dependencies (pytest, ruff, coverage).
+# For runtime-only install use: pip install -e .
+
+-e ".[dev]"
