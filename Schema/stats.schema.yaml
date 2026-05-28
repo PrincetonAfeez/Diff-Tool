@@ -1,0 +1,28 @@
+schema_name: diff_stats
+schema_version: 1.0
+type: object
+python_model: diff_tool.models.DiffStats
+
+fields:
+  old_line_count:
+    type: integer
+    description: Raw old-side line count.
+  new_line_count:
+    type: integer
+    description: Raw new-side line count.
+  equal_count:
+    type: integer
+    description: Number of EQUAL operations.
+  insert_count:
+    type: integer
+    description: Number of INSERT operations.
+  delete_count:
+    type: integer
+    description: Number of DELETE operations.
+  changed_count:
+    type: integer
+    description: Number of non-equal runs counted as max(deletes, inserts).
+  similarity:
+    type: number
+    format: percentage
+    description: equal_count divided by the larger comparable side, multiplied by 100.

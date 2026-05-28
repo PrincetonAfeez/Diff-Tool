@@ -1,0 +1,25 @@
+schema_name: errors
+schema_version: 1.0
+
+base_error:
+  name: DiffToolError
+  description: Base class for expected diff-tool errors.
+
+error_types:
+  - name: InputError
+    description: Raised when an input cannot be read or used.
+  - name: EncodingError
+    description: Raised when input cannot be decoded as UTF-8.
+  - name: BinaryFileError
+    description: Raised when an input looks like a binary file.
+  - name: DiffAlgorithmError
+    description: Raised when the diff algorithm cannot process the input.
+  - name: InvalidOptionError
+    description: Raised when diff options are invalid.
+  - name: CLIError
+    description: Raised for expected CLI usage errors.
+
+cli_error_surface:
+  stderr_prefix: "error:"
+  traceback_expected: false
+  exit_code_on_error: 2

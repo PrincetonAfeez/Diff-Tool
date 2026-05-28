@@ -1,0 +1,38 @@
+schema_name: diff_options
+schema_version: 1.0
+type: object
+python_model: diff_tool.models.DiffOptions
+
+fields:
+  ignore_trailing_space:
+    type: boolean
+    default: false
+    description: Ignore trailing whitespace while comparing lines.
+  ignore_all_space:
+    type: boolean
+    default: false
+    description: Collapse all whitespace while comparing lines.
+  ignore_blank_lines:
+    type: boolean
+    default: false
+    description: Remove blank lines from the comparison and formatted output.
+  ignore_case:
+    type: boolean
+    default: false
+    description: Compare lines case-insensitively.
+  context_lines:
+    type: integer
+    default: 3
+    constraints:
+      minimum: 0
+    description: Unified diff context line count.
+  word_diff:
+    type: boolean
+    default: false
+    description: Enable token-level diff for paired changed lines.
+  max_table_cells:
+    type: integer
+    default: 2000000
+    constraints:
+      minimum: 1
+    description: Maximum allowed LCS dynamic-programming table cells.

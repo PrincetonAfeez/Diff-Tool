@@ -1,0 +1,50 @@
+schema_name: output_formats
+schema_version: 1.0
+
+formats:
+  unified:
+    default: true
+    identical_output: empty string
+    changed_output:
+      includes:
+        - old file header
+        - new file header
+        - hunk headers
+        - context lines
+        - deleted lines
+        - inserted lines
+
+  inline:
+    identical_output: full file with context-style prefixes
+    changed_output:
+      includes:
+        - equal lines prefixed with two spaces
+        - deleted lines prefixed with "- "
+        - inserted lines prefixed with "+ "
+
+  side-by-side:
+    identical_output: full file in two-column layout
+    changed_output:
+      includes:
+        - old text column
+        - marker column
+        - new text column
+    constraints:
+      minimum_width: 40
+
+  summary:
+    identical_output: stats block with "Status: identical"
+    changed_output: stats block with "Status: different"
+    fields:
+      - Status
+      - Old lines
+      - New lines
+      - Equal lines
+      - Inserted lines
+      - Deleted lines
+      - Changed lines
+      - Similarity
+
+word_diff_markers:
+  deleted_token: "[-token-]"
+  inserted_token: "{+token+}"

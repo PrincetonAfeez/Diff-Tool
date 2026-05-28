@@ -1,0 +1,13 @@
+schema_name: accepted_limitations
+schema_version: 1.0
+
+limitations:
+  - Library and CLI only.
+  - No web service.
+  - No database or persistent datastore.
+  - No cloud backend.
+  - No encryption/security boundary.
+  - Very large files are a non-goal because the implementation uses an O(n x m) LCS table.
+  - Runtime implementation is standard-library only.
+  - Word diff is token-based and whitespace-splitting based.
+  - Word diff only applies to paired delete/insert lines.

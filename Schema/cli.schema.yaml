@@ -1,0 +1,84 @@
+schema_name: diff_tool_cli
+schema_version: 1.0
+project: Diff Tool
+entrypoints:
+  module:
+    command: python -m diff_tool.cli
+  console_script:
+    command: diff-tool
+
+arguments:
+  positional:
+    - name: old
+      type: string
+      required: true
+      description: Old file path, or "-" for stdin.
+    - name: new
+      type: string
+      required: true
+      description: New file path, or "-" for stdin.
+
+flags:
+  - name: --version
+    type: boolean
+    description: Print version and exit.
+  - name: --format
+    type: enum
+    values: [unified, side-by-side, inline, summary]
+    default: unified
+    description: Select output format.
+  - name: --stat
+    type: boolean
+    description: Shortcut for summary output.
+  - name: -U / --context
+    type: integer
+    default: 3
+    constraints:
+      minimum: 0
+    description: Number of unified context lines.
+  - name: --ignore-trailing-space
+    type: boolean
+    description: Ignore trailing whitespace during comparison.
+  - name: --ignore-all-space
+    type: boolean
+    description: Collapse all whitespace during comparison.
+  - name: --ignore-blank-lines
+    type: boolean
+    description: Skip blank lines during comparison and output.
+  - name: --ignore-case
+    type: boolean
+    description: Compare case-insensitively.
+  - name: --word-diff
+    type: boolean
+    description: Highlight changed words in paired delete/insert lines.
+  - name: --color
+    type: enum
+    values: [auto, always, never]
+    default: auto
+    description: ANSI color policy.
+  - name: --no-color
+    type: boolean
+    description: Disable ANSI color output.
+  - name: --width
+    type: integer
+    default: 100
+    constraints:
+      minimum: 40
+    description: Side-by-side output width.
+  - name: --max-table-cells
+    type: integer
+    default: 2000000
+    constraints:
+      minimum: 1
+    visibility: hidden
+    description: Reject inputs that would allocate an oversized LCS table.
+
+exit_codes:
+  0: Inputs are identical.
+  1: Inputs are different.
+  2: Error occurred.
+
+stdin_rules:
+  supported: true
+  marker: "-"
+  limitation: Both inputs cannot be stdin at the same time.

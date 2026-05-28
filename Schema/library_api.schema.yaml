@@ -1,0 +1,44 @@
+schema_name: diff_tool_library_api
+schema_version: 1.0
+project: Diff Tool
+
+public_api:
+  package: diff_tool
+  exports:
+    - __version__
+    - diff_lines
+    - DiffOptions
+    - DiffResult
+    - DiffToolError
+    - InputError
+    - EncodingError
+    - BinaryFileError
+    - DiffAlgorithmError
+    - InvalidOptionError
+    - CLIError
+    - Edit
+    - Hunk
+    - Operation
+
+functions:
+  - name: diff_lines
+    module: diff_tool.engine
+    parameters:
+      - name: old_lines
+        type: list[string]
+        required: true
+      - name: new_lines
+        type: list[string]
+        required: true
+      - name: options
+        type: DiffOptions | null
+        required: false
+        default: null
+    returns:
+      type: DiffResult
+    raises:
+      - InvalidOptionError
+      - DiffAlgorithmError
+
+version:
+  current: 0.1.0

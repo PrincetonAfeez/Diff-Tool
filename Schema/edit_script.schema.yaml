@@ -1,0 +1,63 @@
+schema_name: edit_script
+schema_version: 1.0
+
+operation:
+  type: enum
+  values:
+    - equal
+    - insert
+    - delete
+
+edit:
+  type: object
+  python_model: diff_tool.models.Edit
+  fields:
+    op:
+      type: Operation
+      required: true
+    old_index:
+      type: integer | null
+    new_index:
+      type: integer | null
+    old_line_no:
+      type: integer | null
+    new_line_no:
+      type: integer | null
+    old_text:
+      type: string | null
+    new_text:
+      type: string | null
+    old_key:
+      type: string | null
+    new_key:
+      type: string | null
+    word_edits:
+      type: tuple[TokenEdit]
+      default: []
+
+token_edit:
+  type: object
+  python_model: diff_tool.models.TokenEdit
+  fields:
+    op:
+      type: Operation
+      required: true
+    old_token:
+      type: string | null
+    new_token:
+      type: string | null
+
+hunk:
+  type: object
+  python_model: diff_tool.models.Hunk
+  fields:
+    old_start:
+      type: integer
+    old_count:
+      type: integer
+    new_start:
+      type: integer
+    new_count:
+      type: integer
+    edits:
+      type: tuple[Edit]
