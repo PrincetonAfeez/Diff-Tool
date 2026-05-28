@@ -10,5 +10,6 @@
 #
 # Development tools (pytest, coverage, ruff, mypy) are optional extras
 # declared in pyproject.toml. Use one of:
-#   pip install -e ".[dev]"
+#   pip install -e .
+#   pip install -r requirements-dev.lock
 #   pip install -r requirements-dev.txt

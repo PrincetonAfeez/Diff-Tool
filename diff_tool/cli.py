@@ -3,12 +3,19 @@
 from __future__ import annotations
 
 import argparse
+import logging
 import sys
 
 from diff_tool import __version__
 from diff_tool.color import should_color
 from diff_tool.engine import diff_lines
-from diff_tool.errors import CLIError, DiffToolError
+from diff_tool.errors import (
+    BinaryFileError,
+    CLIError,
+    DiffAlgorithmError,
+    EncodingError,
+    InputError,
+)
 from diff_tool.formatters import (
     format_inline,
     format_side_by_side,
@@ -17,6 +24,8 @@ from diff_tool.formatters import (
 )
 from diff_tool.io import read_input
 from diff_tool.models import DiffOptions, DiffResult
+
+logger = logging.getLogger("diff_tool")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -82,6 +91,8 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    logging.basicConfig(format="%(levelname)s: %(message)s", level=logging.WARNING)
+
     parser = build_parser()
     args = parser.parse_args(argv)
 
@@ -128,9 +139,12 @@ def main(argv: list[str] | None = None) -> int:
         if output:
             print(output)
         return 1 if result.has_changes else 0
-    except DiffToolError as exc:
-        print(f"error: {exc}", file=sys.stderr)
+    except CLIError as exc:
+        logger.error("usage error: %s", exc)
         return 2
+    except (InputError, EncodingError, BinaryFileError, DiffAlgorithmError) as exc:
+        logger.error("runtime error: %s", exc)
+        return 3
     except BrokenPipeError:
         return 2
 
@@ -160,7 +174,7 @@ def _format_result(
 
 def _warn_line_endings(label: str, mixed: bool) -> None:
     if mixed:
-        print(f"warning: mixed line endings detected in {label}", file=sys.stderr)
+        logger.warning("mixed line endings detected in %s", label)
 
 
 if __name__ == "__main__":

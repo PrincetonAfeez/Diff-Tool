@@ -1,15 +1,12 @@
-# Development install: package + dev extras from pyproject.toml
+# Pinned development dependencies for reproducible installs.
 #
-# Version ranges (floor and upper bound) live in pyproject.toml [dev].
-# Includes:
-#   - pytest, pytest-cov (tests and coverage)
-#   - ruff (lint + format)
-#   - mypy (static types on diff_tool/)
+# Regenerate after changing [project.optional-dependencies.dev] in pyproject.toml:
+#   pip install pip-tools
+#   pip-compile --extra=dev --output-file=requirements-dev.lock pyproject.toml
 #
-# Usage:
-#   pip install -r requirements-dev.txt
+# Install:
+#   pip install -e .
+#   pip install -r requirements-dev.lock
 #
-# Equivalent:
-#   pip install -e ".[dev]"
-
--e ".[dev]"
+# This file delegates to the lockfile so a single command still works:
+-r requirements-dev.lock

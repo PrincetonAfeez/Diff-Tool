@@ -1,6 +1,7 @@
 """Tests for the command-line interface."""
 
 import io as stdlib_io
+import logging
 
 import pytest
 
@@ -33,15 +34,41 @@ def test_cli_different_files_exit_one_and_print_diff(tmp_path, capsys):
     assert "+b" in output
 
 
-def test_cli_missing_file_exits_two(tmp_path, capsys):
+def test_cli_missing_file_exits_three(tmp_path, caplog):
     new = tmp_path / "new.txt"
     new.write_text("b\n", encoding="utf-8")
 
-    exit_code = main([str(tmp_path / "missing.txt"), str(new)])
-    captured = capsys.readouterr()
+    with caplog.at_level(logging.ERROR, logger="diff_tool"):
+        exit_code = main([str(tmp_path / "missing.txt"), str(new)])
 
-    assert exit_code == 2
-    assert "error:" in captured.err
+    assert exit_code == 3
+    assert any("runtime error:" in record.message for record in caplog.records)
+
+
+def test_cli_binary_file_exits_three(tmp_path, caplog):
+    old = tmp_path / "old.bin"
+    new = tmp_path / "new.txt"
+    old.write_bytes(b"a\x00b")
+    new.write_text("b\n", encoding="utf-8")
+
+    with caplog.at_level(logging.ERROR, logger="diff_tool"):
+        exit_code = main([str(old), str(new)])
+
+    assert exit_code == 3
+    assert any("runtime error:" in record.message for record in caplog.records)
+
+
+def test_cli_invalid_utf8_exits_three(tmp_path, caplog):
+    old = tmp_path / "old.txt"
+    new = tmp_path / "new.txt"
+    old.write_bytes(b"\xff")
+    new.write_text("b\n", encoding="utf-8")
+
+    with caplog.at_level(logging.ERROR, logger="diff_tool"):
+        exit_code = main([str(old), str(new)])
+
+    assert exit_code == 3
+    assert any("runtime error:" in record.message for record in caplog.records)
 
 
 def test_cli_stdin_works(tmp_path, monkeypatch, capsys):
@@ -56,12 +83,16 @@ def test_cli_stdin_works(tmp_path, monkeypatch, capsys):
     assert "Inserted lines: +1" in captured.out
 
 
-def test_cli_both_stdin_fails(capsys):
-    exit_code = main(["-", "-"])
-    captured = capsys.readouterr()
+def test_cli_both_stdin_fails(caplog):
+    with caplog.at_level(logging.ERROR, logger="diff_tool"):
+        exit_code = main(["-", "-"])
 
     assert exit_code == 2
-    assert "both inputs cannot be stdin" in captured.err
+    assert any(
+        "usage error:" in record.message
+        and "both inputs cannot be stdin" in record.message
+        for record in caplog.records
+    )
 
 
 def test_cli_no_color_disables_ansi(tmp_path, capsys):
@@ -101,68 +132,86 @@ def test_cli_ignore_trailing_space(tmp_path, capsys):
     assert capsys.readouterr().out == ""
 
 
-def test_cli_negative_context_exits_two(tmp_path, capsys):
+def test_cli_negative_context_exits_two(tmp_path, caplog):
     old = tmp_path / "old.txt"
     new = tmp_path / "new.txt"
     old.write_text("a\n", encoding="utf-8")
     new.write_text("b\n", encoding="utf-8")
 
-    exit_code = main([str(old), str(new), "--context", "-1"])
-    captured = capsys.readouterr()
+    with caplog.at_level(logging.ERROR, logger="diff_tool"):
+        exit_code = main([str(old), str(new), "--context", "-1"])
 
     assert exit_code == 2
-    assert "context must be zero or greater" in captured.err
+    assert any(
+        "usage error:" in record.message
+        and "context must be zero or greater" in record.message
+        for record in caplog.records
+    )
 
 
-def test_cli_width_too_small_exits_two(tmp_path, capsys):
+def test_cli_width_too_small_exits_two(tmp_path, caplog):
     old = tmp_path / "old.txt"
     new = tmp_path / "new.txt"
     old.write_text("a\n", encoding="utf-8")
     new.write_text("b\n", encoding="utf-8")
 
-    exit_code = main([str(old), str(new), "--width", "20"])
-    captured = capsys.readouterr()
+    with caplog.at_level(logging.ERROR, logger="diff_tool"):
+        exit_code = main([str(old), str(new), "--width", "20"])
 
     assert exit_code == 2
-    assert "width must be at least 40" in captured.err
+    assert any(
+        "usage error:" in record.message
+        and "width must be at least 40" in record.message
+        for record in caplog.records
+    )
 
 
-def test_cli_warns_on_mixed_line_endings(tmp_path, capsys):
+def test_cli_warns_on_mixed_line_endings(tmp_path, caplog):
     old = tmp_path / "old.txt"
     new = tmp_path / "new.txt"
     old.write_bytes(b"a\r\nb\n")
     new.write_text("a\n", encoding="utf-8")
 
-    main([str(old), str(new)])
-    captured = capsys.readouterr()
+    with caplog.at_level("WARNING", logger="diff_tool"):
+        main([str(old), str(new)])
 
-    assert "warning: mixed line endings detected" in captured.err
+    assert any(
+        "mixed line endings detected" in record.message for record in caplog.records
+    )
 
 
-def test_cli_max_table_cells_guard(tmp_path, capsys):
+def test_cli_max_table_cells_guard(tmp_path, caplog):
     old = tmp_path / "old.txt"
     new = tmp_path / "new.txt"
     old.write_text("a\nb\n", encoding="utf-8")
     new.write_text("c\nd\n", encoding="utf-8")
 
-    exit_code = main([str(old), str(new), "--max-table-cells", "4"])
-    captured = capsys.readouterr()
+    with caplog.at_level(logging.ERROR, logger="diff_tool"):
+        exit_code = main([str(old), str(new), "--max-table-cells", "4"])
 
-    assert exit_code == 2
-    assert "too large for the plain O(n x m) LCS table" in captured.err
+    assert exit_code == 3
+    assert any(
+        "runtime error:" in record.message
+        and "too large for the plain O(n x m) LCS table" in record.message
+        for record in caplog.records
+    )
 
 
-def test_cli_max_table_cells_below_one_exits_two(tmp_path, capsys):
+def test_cli_max_table_cells_below_one_exits_two(tmp_path, caplog):
     old = tmp_path / "old.txt"
     new = tmp_path / "new.txt"
     old.write_text("a\n", encoding="utf-8")
     new.write_text("a\n", encoding="utf-8")
 
-    exit_code = main([str(old), str(new), "--max-table-cells", "0"])
-    captured = capsys.readouterr()
+    with caplog.at_level(logging.ERROR, logger="diff_tool"):
+        exit_code = main([str(old), str(new), "--max-table-cells", "0"])
 
     assert exit_code == 2
-    assert "max-table-cells must be at least 1" in captured.err
+    assert any(
+        "usage error:" in record.message
+        and "max-table-cells must be at least 1" in record.message
+        for record in caplog.records
+    )
 
 
 def test_cli_word_diff_flag(tmp_path, capsys):

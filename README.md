@@ -19,7 +19,7 @@ It does not use `difflib`, Hirschberg, Myers diff, or an external diff library.
 - UTF-8 input with clean decode errors
 - Simple binary-file detection (first 4 KiB scanned for NUL bytes)
 - One-sided stdin using `-`
-- Exit codes: `0` identical, `1` different, `2` error
+- Exit codes: `0` identical, `1` different, `2` usage error, `3` runtime error
 - Optional comparison flags for whitespace and case
 - Optional word-level diff for paired delete/insert lines
 
@@ -58,6 +58,15 @@ diff-tool old.txt new.txt
 | `--color` | `auto`, `always`, or `never` |
 | `--no-color` | Disable ANSI color |
 | `--width` | Side-by-side total width (minimum 40) |
+
+### Exit codes
+
+| Code | Meaning |
+|------|---------|
+| `0` | Inputs are identical |
+| `1` | Inputs differ |
+| `2` | CLI usage error (invalid flags or arguments) |
+| `3` | Runtime error (missing file, encoding, binary input, algorithm guard) |
 
 The hidden `--max-table-cells` guard rejects inputs that would allocate an
 oversized DP table. Values below `1` are rejected.
@@ -214,15 +223,17 @@ pytest + coverage command on Python 3.11–3.13.
 Install editable with dev tools:
 
 ```powershell
-pip install -e ".[dev]"
-# or
-pip install -r requirements-dev.txt
+pip install -e .
+pip install -r requirements-dev.lock
+# or non-editable tools only:
+pip install -r requirements-dev.lock
 ```
 
 Runtime install has **no** third-party dependencies (`requirements.txt` is
-documentation only). Dev dependencies are defined in `pyproject.toml`
-under `[project.optional-dependencies.dev]` with floor and upper bounds
-to reduce surprise CI breakage from major tool releases.
+documentation only). Dev dependencies are declared in `pyproject.toml`
+under `[project.optional-dependencies.dev]` with floor and upper bounds.
+Exact resolved versions for reproducible installs are pinned in
+[`requirements-dev.lock`](requirements-dev.lock).
 
 ```powershell
 python -m pytest
