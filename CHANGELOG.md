@@ -33,4 +33,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ADR 0006 for display text and word-diff policy
 - Algorithm overview and scope boundaries in README
 
-[0.1.0]: https://github.com/princ/diff-tool/releases/tag/v0.1.0
+[0.1.0]: https://github.com/PrincetonAfeez/Diff-Tool/releases/tag/v0.1.0
