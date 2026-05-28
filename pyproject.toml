@@ -29,20 +29,20 @@ dependencies = []
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=7.0",
-    "pytest-cov>=4.0",
-    "ruff>=0.4",
-    "mypy>=1.8",
+    "pytest>=7.0,<9",
+    "pytest-cov>=4.0,<7",
+    "ruff>=0.4,<0.16",
+    "mypy>=1.8,<2",
 ]
 
 [project.scripts]
 diff-tool = "diff_tool.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/princ/diff-tool"
-Repository = "https://github.com/princ/diff-tool"
-Issues = "https://github.com/princ/diff-tool/issues"
-Changelog = "https://github.com/princ/diff-tool/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/PrincetonAfeez/Diff-Tool"
+Repository = "https://github.com/PrincetonAfeez/Diff-Tool"
+Issues = "https://github.com/PrincetonAfeez/Diff-Tool/issues"
+Changelog = "https://github.com/PrincetonAfeez/Diff-Tool/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
 where = ["."]
