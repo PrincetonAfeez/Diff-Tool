@@ -1,6 +1,6 @@
 # Diff Tool
 
-[![CI](https://github.com/princ/diff-tool/actions/workflows/ci.yml/badge.svg)](https://github.com/princ/diff-tool/actions/workflows/ci.yml)
+[![CI](https://github.com/PrincetonAfeez/Diff-Tool/actions/workflows/ci.yml/badge.svg)](https://github.com/PrincetonAfeez/Diff-Tool/actions/workflows/ci.yml)
 
 A pure-Python text diff library and command-line tool built around the classic
 Longest Common Subsequence algorithm.
@@ -46,6 +46,7 @@ diff-tool old.txt new.txt
 
 | Flag | Description |
 |------|-------------|
+| `--version` | Print version and exit |
 | `--format` | `unified`, `side-by-side`, `inline`, or `summary` |
 | `--stat` | Shortcut for summary output |
 | `-U`, `--context` | Unified context lines (default: 3) |
@@ -220,7 +221,8 @@ pip install -r requirements-dev.txt
 
 Runtime install has **no** third-party dependencies (`requirements.txt` is
 documentation only). Dev dependencies are defined in `pyproject.toml`
-under `[project.optional-dependencies.dev]`.
+under `[project.optional-dependencies.dev]` with floor and upper bounds
+to reduce surprise CI breakage from major tool releases.
 
 ```powershell
 python -m pytest
