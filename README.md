@@ -162,31 +162,76 @@ is computed from the filtered edit script.
 ## Project Structure
 
 ```text
-diff_tool/          Library and CLI
-  engine.py         Orchestrates normalize → LCS → hunks → stats
-  lcs.py            DP table and backtrace
-  formatters/       Unified, inline, side-by-side, summary renderers
-tests/              Pytest suite
-docs/adr/           Architecture decision records
-examples/           Sample inputs
-tests/fixtures/     Golden expected outputs
+diff_tool/              Library and CLI (stdlib only)
+  cli.py                argparse entry point and exit codes
+  engine.py             normalize → LCS → hunks → stats → word diff
+  lcs.py                DP table and backtrace
+  hunks.py              Context grouping for unified output
+  normalize.py          Comparison keys vs display text
+  word_diff.py          Token-level LCS for changed lines
+  io.py                 UTF-8 files, stdin, binary detection
+  formatters/           unified, inline, side-by-side, summary
+tests/                  Pytest suite (145 tests, ~100% coverage)
+  conftest.py           Shared helpers
+  test_*.py             Layer tests (LCS, engine, formatters, CLI, …)
+  fixtures/             Golden expected outputs
+docs/adr/               Architecture decision records
+examples/               Sample inputs (old.txt, new.txt)
 ```
 
-## Development
+## Testing
 
-Install editable with dev tools (pytest, ruff, mypy, coverage):
+The suite exercises the library and CLI by layer: LCS table and backtrace,
+normalization, hunks, stats, word diff, all formatters, I/O errors, and
+integration examples with golden unified output.
 
 ```powershell
 pip install -e ".[dev]"
 python -m pytest
+python -m pytest --cov=diff_tool --cov-report=term-missing
+```
+
+Coverage is enforced at **95%** minimum on `diff_tool/` (currently ~100% on
+library modules; the CLI `__main__` guard is excluded). CI runs the same
+pytest + coverage command on Python 3.11–3.13.
+
+| Test module | Focus |
+|-------------|--------|
+| `test_lcs.py`, `test_backtrace.py` | DP table, `lcs_steps`, direct backtrace |
+| `test_engine.py` | `diff_lines`, options, reconstruction property |
+| `test_normalize_and_color.py` | Keys, ANSI color policy |
+| `test_hunks.py`, `test_hunks_stats.py` | Hunk merge/split, stats formulas |
+| `test_word_diff.py` | Token diff and render markers |
+| `test_formatters.py` | All output formats and color |
+| `test_io.py` | Files, stdin, encoding, binary |
+| `test_cli.py` | Exit codes, flags, errors |
+| `test_examples.py` | `examples/` + golden fixture |
+| `test_models.py`, `test_errors.py`, `test_package.py` | API surface |
+
+## Development
+
+Install editable with dev tools:
+
+```powershell
+pip install -e ".[dev]"
+# or
+pip install -r requirements-dev.txt
+```
+
+Runtime install has **no** third-party dependencies (`requirements.txt` is
+documentation only). Dev dependencies are defined in `pyproject.toml`
+under `[project.optional-dependencies.dev]`.
+
+```powershell
+python -m pytest
+python -m pytest --cov=diff_tool --cov-report=term-missing
 python -m ruff check .
 python -m ruff format --check .
 python -m mypy diff_tool
 ```
 
-Or use `requirements-dev.txt`, which installs the same dev extra.
-
-CI runs tests, coverage, ruff, and mypy on Python 3.11–3.13.
+CI runs tests with coverage, ruff (check + format), and mypy on Python
+3.11–3.13. See [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
 ## Changelog
 
