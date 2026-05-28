@@ -1,4 +1,14 @@
-# Editable install with dev dependencies (pytest, ruff, coverage).
-# For runtime-only install use: pip install -e .
+# Development install: package + dev extras from pyproject.toml
+#
+# Includes:
+#   - pytest, pytest-cov (tests and coverage)
+#   - ruff (lint + format)
+#   - mypy (static types on diff_tool/)
+#
+# Usage:
+#   pip install -r requirements-dev.txt
+#
+# Equivalent:
+#   pip install -e ".[dev]"
 
 -e ".[dev]"
