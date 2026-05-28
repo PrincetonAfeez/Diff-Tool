@@ -10,6 +10,9 @@ dist/
 *.egg
 .eggs/
 *.whl
+pip-wheel-metadata/
+*.manifest
+*.spec
 
 # Virtual environments
 .venv/
@@ -22,13 +25,20 @@ ENV/
 .coverage
 .coverage.*
 htmlcov/
+coverage.xml
+*.cover
 .tox/
 .nox/
+.hypothesis/
 
 # Type checkers / linters
 .mypy_cache/
 .ruff_cache/
 .pytype/
+
+# Package managers (local lockfiles / caches)
+.uv/
+uv.lock
 
 # IDE / editors
 .vscode/
@@ -42,11 +52,14 @@ htmlcov/
 Thumbs.db
 desktop.ini
 
+# Logs
+*.log
+
 # Local env / secrets
 .env
 .env.*
 !.env.example
 
-# Project notes / scope docs
+# Project notes / scope docs (not part of the package)
 diff_tool_full_scope.txt
 Diff Tool.txt
