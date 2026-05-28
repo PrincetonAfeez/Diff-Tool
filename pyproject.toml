@@ -9,6 +9,22 @@ description = "A pure-Python LCS-based diff library and CLI."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
+keywords = ["diff", "lcs", "cli", "text", "compare"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Software Development :: Version Control",
+    "Topic :: Text Processing",
+    "Typing :: Typed",
+]
 dependencies = []
 
 [project.optional-dependencies]
@@ -22,6 +38,12 @@ dev = [
 [project.scripts]
 diff-tool = "diff_tool.cli:main"
 
+[project.urls]
+Homepage = "https://github.com/princ/diff-tool"
+Repository = "https://github.com/princ/diff-tool"
+Issues = "https://github.com/princ/diff-tool/issues"
+Changelog = "https://github.com/princ/diff-tool/blob/main/CHANGELOG.md"
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["diff_tool*"]
@@ -29,16 +51,23 @@ include = ["diff_tool*"]
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
-addopts = "-q"
+addopts = "-q --strict-markers"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]
 
 [tool.coverage.run]
 source = ["diff_tool"]
 omit = ["tests/*"]
 
 [tool.coverage.report]
-fail_under = 85
+fail_under = 95
 show_missing = true
 skip_empty = true
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+]
 
 [tool.ruff]
 line-length = 88
