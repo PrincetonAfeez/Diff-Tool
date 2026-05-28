@@ -1,3 +1,5 @@
+"""Tests for the longest common subsequence algorithm."""
+
 import pytest
 
 from diff_tool.errors import DiffAlgorithmError
